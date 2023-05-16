@@ -1,0 +1,14 @@
+# oss
+oss:
+  endpoint: https://oss-cn-hangzhou.aliyuncs.com
+  access-key-id: xxx
+  access-key-secret: xxx
+
+# ftp
+ftp:
+  hostname: localhost
+  port: 21
+  username: root
+  password: root
+  working-directory: /opt/ftp
+
