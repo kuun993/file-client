@@ -3,7 +3,9 @@ package com.waani.fc.config;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.waani.fc.properties.FtpProperties;
+import com.waani.fc.properties.MinioProperties;
 import com.waani.fc.properties.OssProperties;
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -23,6 +25,17 @@ public class BeanConfig {
 
     private final FtpProperties ftpProperties ;
 
+    private final MinioProperties minioProperties ;
+
+
+    @Bean(destroyMethod="shutdown")
+    public OSS ossClient(){
+        log.info("creating ossClient ...");
+        OSS oss = new OSSClientBuilder()
+                .build(ossProperties.getEndpoint(), ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
+        log.info("create ossClient success.");
+        return oss ;
+    }
 
     @Bean(destroyMethod = "close")
     public FtpClient ftpClient() throws FtpProtocolException, IOException {
@@ -36,13 +49,19 @@ public class BeanConfig {
     }
 
 
-    @Bean(destroyMethod="shutdown")
-    public OSS ossClient(){
-        log.info("creating ossClient ...");
-        OSS oss = new OSSClientBuilder()
-                .build(ossProperties.getEndpoint(), ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
-        log.info("create ossClient success.");
-        return oss ;
+    @Bean
+    public MinioClient minioClient(){
+        log.info("creating minioClient ...");
+        MinioClient minioClient =
+                MinioClient.builder()
+                        .endpoint(minioProperties.getEndpoint())
+                        .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                        .build();
+        log.info("create minioClient success.");
+        return minioClient ;
     }
+
+
+
 
 }

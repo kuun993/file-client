@@ -12,3 +12,9 @@ ftp:
   password: root
   working-directory: /opt/ftp
 
+
+# minio
+minio:
+  endpoint:  https://localhost
+  access-key: xxx
+  secret-key: xxx
