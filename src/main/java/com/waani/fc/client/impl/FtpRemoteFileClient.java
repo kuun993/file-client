@@ -40,7 +40,6 @@ public class FtpRemoteFileClient implements RemoteFileClient<FtpFileModel> {
                 continue;
             }
             stringBuilder.append(d) ;
-            // 创建目录
             ftpClient.makeDirectory(stringBuilder.toString()) ;
             stringBuilder.append(Constants.SLASH) ;
         }
