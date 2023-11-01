@@ -15,6 +15,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("minio")
 public class MinioProperties {
 
+    private boolean enable;
+
     private String endpoint ;
 
     private String accessKey ;

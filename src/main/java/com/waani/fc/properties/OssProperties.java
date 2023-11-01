@@ -15,6 +15,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("oss")
 public class OssProperties {
 
+    private boolean enable;
+
     private String endpoint ;
 
     private String accessKeyId ;

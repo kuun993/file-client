@@ -16,6 +16,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("ftp")
 public class FtpProperties {
 
+    private boolean enable;
+
     private String hostname ;
 
     private Integer port ;

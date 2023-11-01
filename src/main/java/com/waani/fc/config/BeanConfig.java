@@ -6,13 +6,12 @@ import com.waani.fc.properties.FtpProperties;
 import com.waani.fc.properties.MinioProperties;
 import com.waani.fc.properties.OssProperties;
 import io.minio.MinioClient;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import sun.net.ftp.FtpClient;
 import sun.net.ftp.FtpProtocolException;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -24,19 +23,14 @@ import java.net.InetSocketAddress;
  * @description 配置 Bean
  */
 @Log4j2
-@RequiredArgsConstructor
-@ConfigurationPropertiesScan({"com.waani.fc.properties"})
 public class BeanConfig {
 
-    private final OssProperties ossProperties ;
-
-    private final FtpProperties ftpProperties ;
-
-    private final MinioProperties minioProperties ;
 
 
     @Bean(destroyMethod="shutdown")
-    public OSS ossClient(){
+    @ConditionalOnMissingBean(value = OSS.class)
+    @ConditionalOnProperty(prefix = "oss", name = "enable", havingValue = "true")
+    public OSS ossClient(OssProperties ossProperties){
         log.info("creating ossClient ...");
         OSS oss = new OSSClientBuilder()
                 .build(ossProperties.getEndpoint(), ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
@@ -45,7 +39,8 @@ public class BeanConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public FtpClient ftpClient() throws FtpProtocolException, IOException {
+    @ConditionalOnMissingBean(value = FtpClient.class)
+    public FtpClient ftpClient(FtpProperties ftpProperties) throws FtpProtocolException, IOException {
         log.info("creating ftpClient ...");
         InetSocketAddress inetSocketAddress = new InetSocketAddress(ftpProperties.getHostname(), ftpProperties.getPort()) ;
         FtpClient ftpClient = FtpClient.create(inetSocketAddress) ;
@@ -57,7 +52,8 @@ public class BeanConfig {
 
 
     @Bean
-    public MinioClient minioClient(){
+    @ConditionalOnMissingBean(value = MinioClient.class)
+    public MinioClient minioClient(MinioProperties minioProperties){
         log.info("creating minioClient ...");
         MinioClient minioClient =
                 MinioClient.builder()
