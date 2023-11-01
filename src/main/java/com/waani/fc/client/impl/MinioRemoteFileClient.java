@@ -10,7 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-
+/**
+ * @author waani
+ * @date 2023
+ * @email kuun993@163.com
+ * @description MinioRemoteFileClient
+ */
 @RequiredArgsConstructor
 public class MinioRemoteFileClient implements RemoteFileClient<MinioFileModel> {
 

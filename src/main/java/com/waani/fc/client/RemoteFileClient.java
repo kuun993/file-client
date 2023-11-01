@@ -3,6 +3,13 @@ package com.waani.fc.client;
 import com.waani.fc.client.model.FileModel;
 import java.io.InputStream;
 
+
+/**
+ * @author waani
+ * @date 2023
+ * @email kuun993@163.com
+ * @description RemoteFileClient
+ */
 public interface RemoteFileClient<T extends FileModel> {
 
     /**

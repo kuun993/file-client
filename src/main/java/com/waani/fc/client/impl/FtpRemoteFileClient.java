@@ -17,6 +17,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
+/**
+ * @author waani
+ * @date 2023
+ * @email kuun993@163.com
+ * @description FtpRemoteFileClient
+ */
 @RequiredArgsConstructor
 public class FtpRemoteFileClient implements RemoteFileClient<FtpFileModel> {
 

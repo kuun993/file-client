@@ -16,6 +16,13 @@ import sun.net.ftp.FtpProtocolException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+
+/**
+ * @author waani
+ * @date 2023
+ * @email kuun993@163.com
+ * @description 配置 Bean
+ */
 @Log4j2
 @RequiredArgsConstructor
 @ConfigurationPropertiesScan({"com.waani.fc.properties"})

@@ -5,7 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+/**
+ * @author waani
+ * @date 2023
+ * @email kuun993@163.com
+ * @description FtpFileModel
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,6 +18,9 @@ import lombok.Setter;
 public class FtpFileModel extends FileModel {
 
 
+    /**
+     * remoteName
+     */
     private String remoteName ;
 
 }

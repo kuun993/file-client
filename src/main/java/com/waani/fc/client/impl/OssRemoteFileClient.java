@@ -14,7 +14,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
+/**
+ * @author waani
+ * @date 2023
+ * @email kuun993@163.com
+ * @description OssRemoteFileClient
+ */
 @RequiredArgsConstructor
 public class OssRemoteFileClient implements RemoteFileClient<OssFileModel> {
 
