@@ -27,15 +27,16 @@ public class ShardingFileServiceTest {
     public void uploadFile() throws Exception {
         ShardingTaskVo taskVo = new ShardingTaskVo();
         taskVo.setTaskId(UUID.randomUUID().toString());
-        taskVo.setFilename("rqxs1.png");
-        taskVo.setDestPath("/img/");
+        taskVo.setFilename("3.mp4");
+        taskVo.setDestPath("/video/");
         taskVo.setMd5("");
 
+//        taskVo.setTaskId("323422b9-bf73-45e8-b53c-e6eb17d167a8");
 
-        try (InputStream inputStream = Files.newInputStream(Paths.get("/Users/waani/rqxs.png"));) {
+        try (InputStream inputStream = Files.newInputStream(Paths.get("/Users/waani/temp/file/3.mp4"));) {
 
             // 10k
-            int sharding = 10240;
+            int sharding = 1024 * 1024 * 10;
             int available = inputStream.available();
 
             int number = (available / sharding) + 1;

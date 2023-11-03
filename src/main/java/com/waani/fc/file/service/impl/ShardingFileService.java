@@ -1,5 +1,6 @@
 package com.waani.fc.file.service.impl;
 
+import com.waani.fc.common.AsyncComponent;
 import com.waani.fc.file.service.ShardingFileInterface;
 import com.waani.fc.file.vo.ShardingFileVo;
 import com.waani.fc.file.vo.ShardingTaskVo;
@@ -13,6 +14,9 @@ import sun.net.ftp.FtpDirEntry;
 import sun.net.ftp.FtpClient;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 
 /**
@@ -30,16 +34,16 @@ public class ShardingFileService implements ShardingFileInterface {
     private final FtpClient ftpClient ;
 
 
+    private final AsyncComponent asyncComponent;
+
 
     @SneakyThrows
     @Override
     public void startTask(ShardingTaskVo shardingTask) {
-        changeDirectory(SHARDING_PATH);
-
         // 每个任务创建一个目录
-        ftpClient.makeDirectory(shardingTask.getTaskId());
+        changeDirectory(SHARDING_PATH + shardingTask.getTaskId());
 
-        // 多节点修改成 redis、zk和db 等存储
+        // 缓存分片任务
         SHARDING_MAP.put(shardingTask.getTaskId(), shardingTask);
 
     }
@@ -57,13 +61,16 @@ public class ShardingFileService implements ShardingFileInterface {
     @Override
     public void uploadFile(ShardingFileVo shardingFile, InputStream inputStream) {
         changeDirectory(SHARDING_PATH + shardingFile.getTaskId());
-        // 判断当前文件是否为最后一块
-        if (lastOne(shardingFile.getTaskId())) {
-            genFile(shardingFile, inputStream);
-            return;
-        }
+
         // 写文件
         ftpClient.putFile(String.valueOf(shardingFile.getSerial()), inputStream);
+
+        // 判断当前文件是否为最后一块
+        if (!lastOne(shardingFile.getTaskId())) {
+            return;
+        }
+
+        genFileAndUpload(shardingFile);
     }
 
     /**
@@ -73,7 +80,7 @@ public class ShardingFileService implements ShardingFileInterface {
      */
     @SneakyThrows
     private boolean lastOne(String taskId) {
-        int len = 1;
+        int len = 0;
         Iterator<FtpDirEntry> iterator = ftpClient.listFiles("");
         while (iterator.hasNext() && iterator.next() != null) {
             len++;
@@ -88,35 +95,33 @@ public class ShardingFileService implements ShardingFileInterface {
 
 
     @SneakyThrows
-    private void genFile(ShardingFileVo shardingFile, InputStream is) {
+    private void genFileAndUpload(ShardingFileVo shardingFile) {
         ShardingTaskVo shardingTask = SHARDING_MAP.get(shardingFile.getTaskId());
-        InputStream all = null;
-        try {
-            int number = shardingTask.getNumber();
+
+        int number = shardingTask.getNumber();
+
+        String remoteFile = shardingTask.getDestPath() + shardingTask.getFilename();
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             for (int i = 1; i <= number; i++) {
-                InputStream inputStream = (shardingFile.getSerial() == i)? is: ftpClient.getFileStream(String.valueOf(i));
-                if (all == null) {
-                    all = inputStream;
-                    continue;
+                try (InputStream inputStream = ftpClient.getFileStream(String.valueOf(i));) {
+                    write(outputStream, inputStream);
+                    log.info("write: {}", i);
                 }
-                all = merge(all, inputStream);
             }
-
-            // 上传文件
-            changeDirectory(shardingTask.getDestPath());
-            ftpClient.putFile(shardingTask.getFilename(), all);
-
-            // 删除文件块
-            removeDirectoryAndFiles(SHARDING_PATH + shardingFile.getTaskId());
-
+            ftpClient.putFile(remoteFile, new ByteArrayInputStream(outputStream.toByteArray()));
         } finally {
-            IOUtils.close(all);
+            // 删除文件块
+            removeDirectoryAndFiles(SHARDING_PATH + shardingTask.getTaskId());
         }
+
     }
 
 
+
+
     /**
-     * 写到输入流
+     * 写到输出流
      * @param outputStream
      * @param inputStream
      */

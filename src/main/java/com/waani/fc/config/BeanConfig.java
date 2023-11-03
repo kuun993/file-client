@@ -39,6 +39,7 @@ public class BeanConfig {
     }
 
     @Bean(destroyMethod = "close")
+    @ConditionalOnProperty(prefix = "ftp", name = "enable", havingValue = "true")
     @ConditionalOnMissingBean(value = FtpClient.class)
     public FtpClient ftpClient(FtpProperties ftpProperties) throws FtpProtocolException, IOException {
         log.info("creating ftpClient ...");
@@ -52,6 +53,7 @@ public class BeanConfig {
 
 
     @Bean
+    @ConditionalOnProperty(prefix = "minio", name = "enable", havingValue = "true")
     @ConditionalOnMissingBean(value = MinioClient.class)
     public MinioClient minioClient(MinioProperties minioProperties){
         log.info("creating minioClient ...");

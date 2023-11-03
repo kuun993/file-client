@@ -17,9 +17,16 @@ import java.util.Map;
 public interface ShardingFileInterface {
 
 
+    /**
+     * 缓存分片上传任务
+     * 多节点修改成 redis 或 db 等存储
+     */
     Map<String, ShardingTaskVo> SHARDING_MAP = new HashMap<>();
 
 
+    /**
+     * 分片上传临时目录
+     */
     String SHARDING_PATH = "/sharding/";
 
 
