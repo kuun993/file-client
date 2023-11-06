@@ -2,11 +2,19 @@ package com.waani.fc.config;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.waani.fc.client.RemoteFileClient;
+import com.waani.fc.client.impl.FtpRemoteFileClient;
+import com.waani.fc.client.impl.MinioRemoteFileClient;
+import com.waani.fc.client.impl.OssRemoteFileClient;
+import com.waani.fc.client.model.FtpFileModel;
+import com.waani.fc.client.model.MinioFileModel;
+import com.waani.fc.client.model.OssFileModel;
 import com.waani.fc.properties.FtpProperties;
 import com.waani.fc.properties.MinioProperties;
 import com.waani.fc.properties.OssProperties;
 import io.minio.MinioClient;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -67,6 +75,39 @@ public class BeanConfig {
     }
 
 
+
+
+    // ~ fileClient
+
+
+
+    @Bean(value = "ossRemoteFileClient")
+    @ConditionalOnProperty(prefix = "oss", name = "enable", havingValue = "true")
+    @ConditionalOnMissingBean(value = OssRemoteFileClient.class)
+    @ConditionalOnBean(value = OSS.class)
+    public RemoteFileClient<OssFileModel> ossRemoteFileClient(OSS ossClient) {
+        log.info("creating ossRemoteFileClient...");
+        return new OssRemoteFileClient(ossClient) ;
+    }
+
+    @Bean(value = "ftpRemoteFileClient")
+    @ConditionalOnProperty(prefix = "ftp", name = "enable", havingValue = "true")
+    @ConditionalOnMissingBean(value = FtpRemoteFileClient.class)
+    @ConditionalOnBean(value = FtpClient.class)
+    public RemoteFileClient<FtpFileModel> ftpRemoteFileClient(FtpClient ftpClient) {
+        log.info("creating ftpRemoteFileClient...");
+        return new FtpRemoteFileClient(ftpClient) ;
+    }
+
+
+    @Bean(value = "minioRemoteFileClient")
+    @ConditionalOnProperty(prefix = "minio", name = "enable", havingValue = "true")
+    @ConditionalOnMissingBean(value = MinioRemoteFileClient.class)
+    @ConditionalOnBean(value = MinioClient.class)
+    public RemoteFileClient<MinioFileModel> minioRemoteFileClient(MinioClient minioClient) {
+        log.info("creating minioRemoteFileClient...");
+        return new MinioRemoteFileClient(minioClient) ;
+    }
 
 
 }

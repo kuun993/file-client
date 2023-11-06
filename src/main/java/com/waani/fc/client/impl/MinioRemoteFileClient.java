@@ -23,8 +23,8 @@ public class MinioRemoteFileClient implements RemoteFileClient<MinioFileModel> {
     private final MinioClient minioClient ;
 
     @Override
-    public void createDir(MinioFileModel model) throws Exception {
-        PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(model.getBucketName()).object(model.getDir()).stream(
+    public void createDirectory(MinioFileModel model) throws Exception {
+        PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(model.getBucketName()).object(model.getRemoteDirectory()).stream(
                         new ByteArrayInputStream(new byte[]{}), 0, -1).build();
         minioClient.putObject(putObjectArgs);
     }
@@ -94,5 +94,12 @@ public class MinioRemoteFileClient implements RemoteFileClient<MinioFileModel> {
         minioClient.copyObject(copyObjectArgs) ;
 
         removeFile(from) ;
+    }
+
+
+    @Override
+    public void removeDirectoryAndFiles(MinioFileModel model)  throws Exception {
+        // TODO
+        removeFile(model);
     }
 }

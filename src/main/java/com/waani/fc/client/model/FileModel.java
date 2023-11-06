@@ -16,6 +16,6 @@ public class FileModel {
     /**
      * 目录
      */
-    private String dir ;
+    protected String remoteDirectory;
 
 }

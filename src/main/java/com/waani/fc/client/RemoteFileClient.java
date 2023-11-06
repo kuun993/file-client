@@ -14,10 +14,11 @@ public interface RemoteFileClient<T extends FileModel> {
 
     /**
      * 创建目录
+     * 已存在则忽略
      * @param t
      * @throws Exception
      */
-    void createDir(T t) throws Exception;
+    void createDirectory(T t) throws Exception;
 
     /**
      * 根据文件路径上传文件
@@ -65,5 +66,15 @@ public interface RemoteFileClient<T extends FileModel> {
      * @throws Exception
      */
     void moveFile(T f, T t) throws Exception;
+
+
+    /**
+     * 删除目录
+     * @param t
+     */
+    void removeDirectoryAndFiles(T t) throws Exception;
+
+
+
 
 }

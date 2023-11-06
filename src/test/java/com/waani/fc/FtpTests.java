@@ -1,11 +1,15 @@
 package com.waani.fc;
 
 
+import com.waani.fc.client.RemoteFileClient;
+import com.waani.fc.client.impl.FtpRemoteFileClient;
+import com.waani.fc.client.model.FtpFileModel;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 import sun.net.ftp.FtpClient;
@@ -23,7 +27,11 @@ public class FtpTests {
 
 
     @Autowired
-    private FtpClient ftpClient ;
+    private FtpClient ftpClient;
+
+    @Qualifier("ftpRemoteFileClient")
+    @Autowired
+    private RemoteFileClient<FtpFileModel> ftpRemoteFileClient;
 
 
     @SneakyThrows
@@ -66,12 +74,30 @@ public class FtpTests {
     @Test
     public void testPut() {
 
-        ftpClient.changeDirectory("/video/");
+        ftpClient.changeDirectory("/h/");
 
-        try (InputStream inputStream = Files.newInputStream(Paths.get("/Users/waani/temp/file/3.mp4"))) {
-            ftpClient.putFile("xxx1.mp4", inputStream);
+        try (InputStream inputStream = Files.newInputStream(Paths.get("/Users/waani/temp/file/1.mp4"))) {
+            ftpClient.putFile("1.mp4", inputStream);
         }
 
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void mkDir() {
+        FtpFileModel fileModel = new FtpFileModel();
+        fileModel.setRemoteDirectory("/h/w/waani/");
+        ftpRemoteFileClient.createDirectory(fileModel);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void removeDirectoryAndFiles() {
+        FtpFileModel fileModel = new FtpFileModel();
+        fileModel.setRemoteDirectory("/h");
+        ftpRemoteFileClient.removeDirectoryAndFiles(fileModel);
     }
 
 
