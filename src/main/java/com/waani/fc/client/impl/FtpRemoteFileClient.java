@@ -5,7 +5,6 @@ import com.waani.fc.common.Constants;
 import com.waani.fc.client.RemoteFileClient;
 import com.waani.fc.client.model.FtpFileModel;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import sun.net.ftp.FtpClient;

@@ -1,6 +1,5 @@
 package com.waani.fc.client.model;
 
-import com.waani.fc.common.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

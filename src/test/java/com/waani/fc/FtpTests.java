@@ -2,7 +2,6 @@ package com.waani.fc;
 
 
 import com.waani.fc.client.RemoteFileClient;
-import com.waani.fc.client.impl.FtpRemoteFileClient;
 import com.waani.fc.client.model.FtpFileModel;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
